@@ -12,7 +12,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from aiohttp import ClientSession, ClientTimeout
 from typing import Optional, List
 
-TOKEN = os.getenv("DISCORD_TOKEN", "MTUxNDc0OTE3NjY2NjEzMjY1Mg.GU8_8z.L_kJltlZwDYHm9KmR078GaBETQDfmlFpTHGUqo")
+TOKEN = os.getenv("DISCORD_TOKEN")
 
 intents = disnake.Intents.default()
 intents.message_content = True
@@ -175,7 +175,7 @@ async def download_photos(session: ClientSession, url: str) -> Optional[List[tup
     if not images:
         return None
     video_id = data.get("id", "photo")
-    tasks = [fetch_bytes(session, img_url) for img_url in images]
+    tasks = [fetch_bytes_safe(session, img_url) for img_url in images]
     results = await asyncio.gather(*tasks)
     files = []
     for i, content in enumerate(results, 1):
